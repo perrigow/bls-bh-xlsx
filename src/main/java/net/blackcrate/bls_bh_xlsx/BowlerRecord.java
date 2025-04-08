@@ -3,6 +3,8 @@ package net.blackcrate.bls_bh_xlsx;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class BowlerRecord {
 
@@ -72,11 +74,9 @@ public class BowlerRecord {
         StringBuilder values = new StringBuilder();
         header.append(String.format("%-20s", "Name"));
         values.append(String.format("%-20s", this.name));
-        for (BowlerStatistic stat : this.gamesStats) {
-            header.append(String.format("%-7s", stat.category));
-            values.append(String.format("%-7d", stat.count()));
-        }
-        for (BowlerStatistic stat : this.seriesStats) {
+
+        List<BowlerStatistic> stats = Stream.concat(this.gamesStats.stream(), this.seriesStats.stream()).collect(Collectors.toList());
+        for (BowlerStatistic stat : stats) {
             header.append(String.format("%-7s", stat.category));
             values.append(String.format("%-7d", stat.count()));
         }
