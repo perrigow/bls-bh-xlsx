@@ -64,7 +64,7 @@ public class BowlerRecord {
         updateStats(seriesStats, series);
     }
 
-    public float avg () {
+    public float avg() {
         return (float) this.totalPins / this.totalGames;
     }
 
