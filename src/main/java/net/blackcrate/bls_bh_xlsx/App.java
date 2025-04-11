@@ -51,14 +51,18 @@ public class App {
     }
 
     public static void main(String[] args) {
-        App app = new App();
 
-        File[] blsFiles = new File[] { new File("/home/wayne/Public/Bowler History/AJ & Dennis Gregory Memorial Doubles.pdf") };
-        //File[] blsFiles = new File[] { new File("/home/wayne/Public/Bowler History") };
+        if (args.length != 1) {
+            System.err.println("No file or directory specified!");
+            System.exit(1);
+        }
+
+        File[] blsFiles = new File[] { new File(args[0]) };
         if (blsFiles[0].exists()) {
             if (blsFiles[0].isDirectory()) {
                 blsFiles = blsFiles[0].listFiles((File dir, String name) -> name.toLowerCase().endsWith(".pdf"));
             }
+            App app = new App();
             app.parseBowlerHistory(blsFiles);
         } else {
             System.err.println("The file or directory does not exist!");
