@@ -21,10 +21,10 @@ public class BLSContentHandler extends DefaultHandler {
     public final List<BowlerRecord> records;
 
     public BLSContentHandler() {
-        this.currentText = new StringBuilder();
-        this.isHdcp = false;
+        currentText = new StringBuilder();
+        isHdcp = false;
 
-        this.records = new ArrayList<>();
+        records = new ArrayList<>();
     }
 
     private static boolean isWeek(String[] data) {
@@ -37,7 +37,7 @@ public class BLSContentHandler extends DefaultHandler {
     private void processWeek(String[] data) {
         // game 1 (and bowledCheck), game 2, game 3, series
         int[] indices = new int[] {3,4,5,6};
-        if (this.isHdcp) {
+        if (isHdcp) {
             indices = new int[] {4,5,6,7};
         }
 
@@ -47,20 +47,20 @@ public class BLSContentHandler extends DefaultHandler {
             for (int gameIdx : Arrays.copyOf(indices, 3)) {
                 String game = parts.get(gameIdx);
                 if (game.matches("^[1-9][0-9]{0,}$")) {
-                    this.currentRecord.addGame(Integer.parseInt(game));
+                    currentRecord.addGame(Integer.parseInt(game));
                     gamesBowled++;
                 }
             }
 
             if (gamesBowled == 3) {
-                this.currentRecord.addSeries(Integer.parseInt(parts.get(indices[3])));
+                currentRecord.addSeries(Integer.parseInt(parts.get(indices[3])));
             }
         }
     }
 
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
-        this.currentText.append(ch, start, length);
+        currentText.append(ch, start, length);
     }
 
     @Override
@@ -68,14 +68,14 @@ public class BLSContentHandler extends DefaultHandler {
         if (!StringEscapeUtils.escapeJava(new String(ch)).equals("\\n"))
             return;
 
-        String text = this.currentText.toString().trim();
+        String text = currentText.toString().trim();
         if (text.contains("Bowling Record")) {
-            if (this.currentRecord != null) {
-                this.records.add(this.currentRecord);
+            if (currentRecord != null) {
+                records.add(currentRecord);
             }
 
             String name = text.substring(0, text.indexOf("'s"));
-            this.currentRecord = new BowlerRecord(name);
+            currentRecord = new BowlerRecord(name);
         }
 
         if (text.contains("HDCP")) {
@@ -84,15 +84,15 @@ public class BLSContentHandler extends DefaultHandler {
 
         String[] textArray = text.split("\\s+");
         if (!text.isEmpty() && isWeek(textArray)) {
-            this.processWeek(textArray);
+            processWeek(textArray);
         }
 
-        this.currentText.setLength(0);
+        currentText.setLength(0);
     }
 
     @Override
     public void endDocument() throws SAXException {
-        this.records.add(this.currentRecord);
+        records.add(currentRecord);
     }
 
     @Override
@@ -111,7 +111,7 @@ public class BLSContentHandler extends DefaultHandler {
     }
 
     public List<BowlerRecord> getRecords(){
-        return this.records;
+        return records;
     }
 
 }

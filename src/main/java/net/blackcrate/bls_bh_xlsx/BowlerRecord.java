@@ -41,8 +41,8 @@ public class BowlerRecord {
 
     public BowlerRecord(String name) {
         this.name = name;
-        this.totalGames = 0;
-        this.totalPins = 0;
+        totalGames = 0;
+        totalPins = 0;
     }
 
     private static void updateStats(List<BowlerStatistic> stats, int value) {
@@ -56,8 +56,8 @@ public class BowlerRecord {
 
     public void addGame(int game) {
         updateStats(gamesStats, game);
-        this.totalPins += game;
-        this.totalGames++;
+        totalPins += game;
+        totalGames++;
     }
 
     public void addSeries(int series) {
@@ -65,7 +65,7 @@ public class BowlerRecord {
     }
 
     public float avg() {
-        return (float) this.totalPins / this.totalGames;
+        return (float) totalPins / totalGames;
     }
 
     @Override
@@ -73,15 +73,15 @@ public class BowlerRecord {
         StringBuilder header = new StringBuilder();
         StringBuilder values = new StringBuilder();
         header.append(String.format("%-20s", "Name"));
-        values.append(String.format("%-20s", this.name));
+        values.append(String.format("%-20s", name));
 
-        List<BowlerStatistic> stats = Stream.concat(this.gamesStats.stream(), this.seriesStats.stream()).collect(Collectors.toList());
+        List<BowlerStatistic> stats = Stream.concat(gamesStats.stream(), seriesStats.stream()).collect(Collectors.toList());
         for (BowlerStatistic stat : stats) {
             header.append(String.format("%-7s", stat.category));
             values.append(String.format("%-7d", stat.count()));
         }
         header.append(String.format("%-10s", "Final Avg"));
-        values.append(String.format("%-10.2f", this.avg()));
+        values.append(String.format("%-10.2f", avg()));
 
         return header.toString() + "\n" + values.toString();
     }

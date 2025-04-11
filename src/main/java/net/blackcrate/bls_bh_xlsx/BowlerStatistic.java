@@ -9,22 +9,22 @@ public class BowlerStatistic {
     public BowlerStatistic(String category, int limit) {
         this.category = category;
         this.limit = limit;
-        this.count = 0;
+        count = 0;
     }
 
     public void addOne() {
-        this.count++;
+        count++;
     }
 
     public int count() {
-        return this.count;
+        return count;
     }
 
     @Override
     public String toString() {
         return String.format(
             "category=%s, limit=%d, count=%d",
-            this.category, this.limit, this.count
+            category, limit, count
         );
     }
 
