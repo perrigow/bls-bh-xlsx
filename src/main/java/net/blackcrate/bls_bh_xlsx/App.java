@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.EncryptedDocumentException;
@@ -17,20 +20,27 @@ import org.xml.sax.SAXException;
 
 public class App {
 
+    private static final Logger logger = Logger.getLogger(App.class.getName());
     private static final String TIMESTAMP;
 
     static {
         Date currentDate = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd'T'HHmmss");
         TIMESTAMP = formatter.format(currentDate);
+
+        try (InputStream loggingProperties = App.class.getClassLoader().getResourceAsStream("logging.properties")) {
+            LogManager.getLogManager().readConfiguration(loggingProperties);
+        } catch (Exception ex) {
+            logger.log(Level.SEVERE, "Could not load logger properties", ex);
+        }
     }
 
     private void parseBowlerHistory(File[] blsFiles) {
         File xlsxFile = new File(blsFiles[0].getParent() + "/BowlerStats_" + TIMESTAMP + ".xlsx");
 
         try (XLSXOutputHandler xlsxHandler = new XLSXOutputHandler(xlsxFile)) {
-            System.out.println("Processing " + blsFiles.length + " files...");
             for (File blsFile : blsFiles) {
+                logger.log(Level.INFO, "Processing {0}...", blsFile.getName());
                 try (InputStream blsStream = new FileInputStream(blsFile)) {
                     PDFParser parser = new PDFParser();
                     BLSContentHandler blsHandler = new BLSContentHandler();
@@ -39,21 +49,22 @@ public class App {
 
                     parser.parse(blsStream, blsHandler, metadata, context);
 
+                    logger.info("\tWriting bowler history stats...");
                     String sheetName = FilenameUtils.getBaseName(blsFile.getName());
                     xlsxHandler.writeSheet(sheetName, blsHandler.records);
-                } catch (IOException | SAXException | TikaException e) {
-                    e.printStackTrace();
+                } catch (IOException | SAXException | TikaException ex) {
+                    logger.log(Level.WARNING, "Failed to process BLS file " + blsFile.getName(), ex);
                 }
             }
-        } catch (EncryptedDocumentException | IOException e1) {
-            e1.printStackTrace();
+        } catch (EncryptedDocumentException | IOException ex) {
+            logger.log(Level.WARNING, "Failed to write to Excel (xlsx) file", ex);
         }
     }
 
     public static void main(String[] args) {
 
         if (args.length != 1) {
-            System.err.println("No file or directory specified!");
+            logger.severe("No file or directory specified, exiting...");
             System.exit(1);
         }
 
@@ -65,7 +76,8 @@ public class App {
             App app = new App();
             app.parseBowlerHistory(blsFiles);
         } else {
-            System.err.println("The file or directory does not exist!");
+            logger.severe("The file or directory does not exist, exiting...");
+            System.exit(2);
         }
     }
 }
