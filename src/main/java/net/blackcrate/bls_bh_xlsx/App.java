@@ -35,7 +35,6 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        logger.info("Curtain up and show the stage");
         appPresenter.curtainUp(stage);
     }
 
@@ -57,7 +56,7 @@ public class App extends Application {
                     }
                     AppModel appModel = new AppModel();
                     appModel.setBlsFiles(blsFiles);
-                    appModel.parseBowlerHistory();
+                    appModel.parseBowlerHistory(null);
                 }
             }        
         } else {

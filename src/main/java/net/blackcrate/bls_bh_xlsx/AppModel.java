@@ -43,6 +43,14 @@ public class AppModel implements Contract.Model {
         return new File(blsFiles.get(0).getParent() + "/BowlerStats_" + getTimestamp() + ".xlsx");
     }
 
+    private void updateProgress(Contract.Model.onProgressUpdateListener listener, double progress, String status) {
+        if (listener == null) {
+            logger.info("");
+            return;
+        }
+        listener.onProgressUpdate(progress, status);
+    }
+
     @Override
     public int getBlsFileCount() {
         return blsFiles.size();
@@ -70,15 +78,20 @@ public class AppModel implements Contract.Model {
     }
 
     @Override
-    public boolean parseBowlerHistory() {
+    public boolean parseBowlerHistory(Contract.Model.onProgressUpdateListener listener) {
         if (blsFiles.isEmpty()) {
             logger.warning("BLS files list is empty");
             return false;
         }
 
+        double jobs = (double) blsFiles.size() * 2; // multiple by 2 for process and write
+        double completed = 0.00;
+        String status = "Warming up...";
+        updateProgress(listener, completed/jobs, status);
         try (XLSXOutputHandler xlsxHandler = new XLSXOutputHandler(xlsxFile)) {
             for (File blsFile : blsFiles) {
-                logger.log(Level.INFO, "Processing {0}...", blsFile.getName());
+                status = "Processing " + blsFile.getName();
+                updateProgress(listener, completed/jobs, status);
                 try (InputStream blsStream = new FileInputStream(blsFile)) {
                     PDFParser parser = new PDFParser();
                     BLSContentHandler blsHandler = new BLSContentHandler();
@@ -86,18 +99,21 @@ public class AppModel implements Contract.Model {
                     ParseContext context = new ParseContext();
 
                     parser.parse(blsStream, blsHandler, metadata, context);
+                    completed++;
 
-                    logger.info("\tWriting bowler history stats...");
+                    status = "Writing bowler history stats for " + blsFile.getName();
+                    updateProgress(listener, completed/jobs, status);
                     String sheetName = FilenameUtils.getBaseName(blsFile.getName());
                     xlsxHandler.writeSheet(sheetName, blsHandler.records);
-                    return true;
+                    completed++;
                 } catch (IOException | SAXException | TikaException ex) {
                     logger.log(Level.WARNING, "Failed to process BLS file " + blsFile.getName(), ex);
                 }
             }
         } catch (EncryptedDocumentException | IOException ex) {
-            logger.log(Level.WARNING, "Failed to write to Excel (xlsx) file", ex);
+            logger.log(Level.SEVERE, "Failed to write to Excel (xlsx) file", ex);
+            return false;
         }
-        return false;
+        return true;
     }
 }

@@ -12,7 +12,7 @@ import javafx.stage.Stage;
 public interface Contract {
     interface View {
         // method to build the main scene in view
-        Scene buildMainScene(ViewListener listener);
+        Scene buildMainScene(Contract.View.ViewListener listener);
 
         // method to set save as text in view
         void setSaveAsText(String filepath);
@@ -58,7 +58,13 @@ public interface Contract {
 
         // method to parse the bowler histories
         // returns true if successful, false otherwise 
-        boolean parseBowlerHistory();
+        boolean parseBowlerHistory(Contract.Model.onProgressUpdateListener listener);
+
+        // nested interface to listen for progress updates
+        interface onProgressUpdateListener {
+            // method called when there is a progress update
+            void onProgressUpdate(double progress, String status);
+        }
     }
 
     interface Presenter {

@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.event.EventHandler;
@@ -16,7 +17,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
-public class AppPresenter implements Contract.Presenter, Contract.View.ViewListener {
+public class AppPresenter implements Contract.Presenter, Contract.View.ViewListener, Contract.Model.onProgressUpdateListener {
 
     private static final Logger logger = Logger.getLogger(AppPresenter.class.getName());
 
@@ -54,6 +55,7 @@ public class AppPresenter implements Contract.Presenter, Contract.View.ViewListe
             }
         }
         appModel.setBlsFiles(blsFiles);
+        appView.setSaveAsText(appModel.getXlsxFile().toString());
         appView.setProcessNumFiles(appModel.getBlsFileCount());
     }
 
@@ -107,8 +109,15 @@ public class AppPresenter implements Contract.Presenter, Contract.View.ViewListe
     @Override
     public EventHandler<MouseEvent> startProcessHandler() {
         return (MouseEvent event) -> {
-            appModel.parseBowlerHistory();
+            // add code to show progress and update progress
+            appModel.parseBowlerHistory(this);
         };
+    }
+
+    @Override
+    public void onProgressUpdate(double progress, String status) {
+        logger.log(Level.INFO, "Progress updated to: {0}%", progress * 100);
+        logger.log(Level.INFO, "Progress status: {0}", status);
     }
 
     @Override
@@ -121,7 +130,8 @@ public class AppPresenter implements Contract.Presenter, Contract.View.ViewListe
         //stage.getIcons().add(new Image(("images/logo/logo.png")));
         stage.setResizable(false);
         stage.setScene(scene);
-        stage.show();
 
+        logger.info("Curtain up and show the stage");
+        stage.show();
     }
 }
