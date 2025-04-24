@@ -96,10 +96,10 @@ public class AppView implements Contract.View {
         boolean buttonsDisabled = numFiles <= 0;
 
         logger.log(Level.INFO, "Setting buttons disabled: {0}", buttonsDisabled);
-        saveAsButton.setDisable(false);
-        processStart.setDisable(false);
+        saveAsButton.setDisable(buttonsDisabled);
+        processStart.setDisable(buttonsDisabled);
 
-        logger.log(Level.INFO, "Setting process text disabled: {0}", buttonsDisabled);
+        logger.log(Level.INFO, "Setting files to process: {0}", numFiles);
         processNumFiles.setText("Files to process: " + numFiles);
     }
 

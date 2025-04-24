@@ -57,11 +57,10 @@ public interface Contract {
         void setXlsxFile(String xlsxFile);
 
         // method to parse the bowler histories
-        // returns true if successful, false otherwise 
-        boolean parseBowlerHistory(Contract.Model.onProgressUpdateListener listener);
+        void parseBowlerHistory(Contract.Model.onProcessUpdateListener listener);
 
         // nested interface to listen for progress updates
-        interface onProgressUpdateListener {
+        interface onProcessUpdateListener {
             // method called when there is a progress update
             void onProgressUpdate(double progress, String status);
         }

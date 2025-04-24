@@ -17,7 +17,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
-public class AppPresenter implements Contract.Presenter, Contract.View.ViewListener, Contract.Model.onProgressUpdateListener {
+public class AppPresenter implements Contract.Presenter, Contract.View.ViewListener, Contract.Model.onProcessUpdateListener {
 
     private static final Logger logger = Logger.getLogger(AppPresenter.class.getName());
 
@@ -38,24 +38,21 @@ public class AppPresenter implements Contract.Presenter, Contract.View.ViewListe
         ));
     }
 
-    private void updateModelView(List<File> selectedFiles) {
-        if (selectedFiles == null || selectedFiles.isEmpty()) {
-            logger.warning("No files to process");
+    private void resetModelView() {
+        appModel.setBlsFiles(new ArrayList<>());
+        appView.setProcessNumFiles(0);
+        appView.setSaveAsText("");
+    }
+
+    private void updateModelView(List<File> blsFiles) {
+        if (blsFiles.isEmpty()) {
+            logger.warning("Nothing to process");
+            resetModelView();
             return;
         }
 
-        List<File> blsFiles = new ArrayList<>();
-        for (File file : selectedFiles) {
-            if (file.isDirectory()) {
-                blsFiles.addAll(getDirectoryFiles(file));
-                continue;
-            }
-            if (file.getName().toLowerCase().endsWith(".pdf")) {
-                blsFiles.add(file);
-            }
-        }
         appModel.setBlsFiles(blsFiles);
-        appView.setSaveAsText(appModel.getXlsxFile().toString());
+        appView.setSaveAsText(appModel.getXlsxFile().getName());
         appView.setProcessNumFiles(appModel.getBlsFileCount());
     }
 
@@ -71,7 +68,17 @@ public class AppPresenter implements Contract.Presenter, Contract.View.ViewListe
     @Override
     public EventHandler<DragEvent> dragDroppedHandler() {
         return (DragEvent event) -> {
-            updateModelView(event.getDragboard().getFiles());
+            List<File> selectedFiles = new ArrayList<>();
+            for (File file : event.getDragboard().getFiles()) {
+                if (file.isDirectory()) {
+                    selectedFiles.addAll(getDirectoryFiles(file));
+                    continue;
+                }
+                if (file.getName().toLowerCase().endsWith(".pdf")) {
+                    selectedFiles.add(file);
+                }
+            }
+            updateModelView(selectedFiles);
         };
     }
 
@@ -80,8 +87,11 @@ public class AppPresenter implements Contract.Presenter, Contract.View.ViewListe
         return (MouseEvent event) -> {
             FileChooser chooser = new FileChooser();
             chooser.setTitle("Choose BLS PDFs");
-            chooser.setSelectedExtensionFilter(new ExtensionFilter("PDF Documents (*.pdf)", "*.pdf"));
-            updateModelView(chooser.showOpenMultipleDialog(stage));
+            chooser.getExtensionFilters().add(new ExtensionFilter("PDF Documents (*.pdf)", "*.pdf"));
+            List<File> selectedFiles = chooser.showOpenMultipleDialog(stage);
+            if (selectedFiles != null) {
+                updateModelView(selectedFiles);
+            }
         };
     }
 
@@ -90,7 +100,10 @@ public class AppPresenter implements Contract.Presenter, Contract.View.ViewListe
         return (MouseEvent event) -> {
             DirectoryChooser chooser = new DirectoryChooser();
             chooser.setTitle("Choose BLS PDFs Folder");
-            updateModelView(List.of(chooser.showDialog(stage)));
+            File directory = chooser.showDialog(stage);
+            if (directory != null) {
+                updateModelView(getDirectoryFiles(directory));
+            }
         };
     }
 
@@ -99,9 +112,11 @@ public class AppPresenter implements Contract.Presenter, Contract.View.ViewListe
         return (MouseEvent event) -> {
             FileChooser chooser = new FileChooser();
             chooser.setTitle("Save BLS XLSX");
-            File file = chooser.showSaveDialog(stage);
-            if (file != null) {
-                appModel.setXlsxFile(file);
+            chooser.setInitialDirectory(appModel.getXlsxFile().getParentFile());
+            File xlsxFile = chooser.showSaveDialog(stage);
+            if (xlsxFile != null) {
+                appModel.setXlsxFile(xlsxFile);
+                appView.setSaveAsText(xlsxFile.getName());
             }
         };
     }
@@ -111,6 +126,8 @@ public class AppPresenter implements Contract.Presenter, Contract.View.ViewListe
         return (MouseEvent event) -> {
             // add code to show progress and update progress
             appModel.parseBowlerHistory(this);
+            // alert to notify user processing has been completed
+            resetModelView();
         };
     }
 
