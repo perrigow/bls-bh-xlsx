@@ -2,12 +2,13 @@ package net.blackcrate.bls_bh_xlsx;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class App extends Application {
@@ -22,39 +23,45 @@ public class App extends Application {
 
     private static final Logger logger = Logger.getLogger(App.class.getName());
 
-    private final AppView appView;
+    private final Contract.View appView;
+    private final Contract.Model appModel;
+    private final Contract.Presenter appPresenter;
 
     public App() {
         appView = new AppView();
+        appModel = new AppModel();
+        appPresenter = new AppPresenter(appView, appModel);
     }   
 
     @Override
     public void start(Stage stage) throws Exception {
-        VBox root = appView.buildRootNode();
-        
-        Scene scene = new Scene(root);
-        scene.getStylesheets().add("/css/app.css");
-
-        stage.setTitle("BLS Bowler History to XLSX");
-        stage.setScene(scene);
-        stage.setResizable(false);
-        stage.show();
+        logger.info("Curtain up and show the stage");
+        appPresenter.curtainUp(stage);
     }
 
     public static void main(String[] args) {
         if (args.length == 1) {
-            File[] blsFiles = new File[] { new File(args[0]) };
-            if (blsFiles[0].exists()) {
-                if (blsFiles[0].isDirectory()) {
-                    blsFiles = blsFiles[0].listFiles((File dir, String name) -> name.toLowerCase().endsWith(".pdf"));
+            logger.info("Run command line processing");
+            List<File> blsFiles = new ArrayList<>();
+            for (String arg : args) {
+                File blsFile = new File(arg);
+                if (blsFile.exists()) {
+                    if (blsFile.isDirectory()) {
+                        blsFiles.addAll(Arrays.asList(
+                            blsFile.listFiles((File dir, String name) -> name.toLowerCase().endsWith(".pdf"))
+                        ));
+                        continue;
+                    }
+                    if (blsFile.getName().toLowerCase().endsWith(".pdf")) {
+                        blsFiles.add(blsFile);
+                    }
+                    AppModel appModel = new AppModel();
+                    appModel.setBlsFiles(blsFiles);
+                    appModel.parseBowlerHistory();
                 }
-                AppModel appModel = new AppModel();
-                appModel.parseBowlerHistory(blsFiles);
-            } else {
-                logger.severe("The file or directory does not exist, exiting...");
-                System.exit(2);
-            }
+            }        
         } else {
+            logger.info("Launch GUI processing");
             launch();
         }
     }
