@@ -87,3 +87,36 @@
 #processStart {
     -fx-min-width: 100;
 }
+
+#processingComplete .label {
+    -fx-text-alignment: center;
+    -fx-padding: 12 0 8 0;
+}
+
+#processingProgress {
+    -fx-padding: 15;
+    -fx-min-height: 100;
+}
+#processingProgress .label {
+    -fx-font: 18 sans-serif;
+}
+
+#progressStatus {
+    -fx-min-width: 360;
+    -fx-max-width: 360;
+    -fx-wrap-text: true;
+    -fx-padding: 0 3 0 3;
+}
+
+#progressBarNode {
+    -fx-alignment: center;
+}
+#progressBarNode .progress-bar {
+    -fx-min-height: 30;
+    -fx-min-width: 300;
+    -fx-accent: #0097A7;
+}
+#progressBarNode .label {
+    -fx-alignment: center-right;
+    -fx-min-width: 50;
+}

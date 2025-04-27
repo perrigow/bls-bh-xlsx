@@ -5,10 +5,16 @@ import java.util.logging.Logger;
 
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public class AppView implements Contract.View {
 
@@ -19,6 +25,11 @@ public class AppView implements Contract.View {
 
     private Button processStart;
     private Label processNumFiles;
+
+    private Dialog<Boolean> progressDialog;
+    private ProgressBar progressBar;
+    private Label progressPercent;
+    private Label progressStatus;
 
     public AppView() {
         logger.info("AppView object initialized");
@@ -86,6 +97,23 @@ public class AppView implements Contract.View {
     }
 
     @Override
+    public Scene buildMainScene(ViewListener listener) {
+        logger.info("Building main scene");
+
+        VBox root = new VBox(
+            buildDragDropNode(listener),
+            buildSaveAsNode(listener),
+            buildProcessNode(listener)
+        );
+        root.setId("root");
+
+        Scene scene = new Scene(root);
+        scene.getStylesheets().add("/css/app.css");
+
+        return scene;
+    }
+
+    @Override
     public void setSaveAsText(String filepath) {
         logger.log(Level.INFO, "Setting save as text to: {0}", filepath);
         saveAsText.setText(filepath);
@@ -104,19 +132,60 @@ public class AppView implements Contract.View {
     }
 
     @Override
-    public Scene buildMainScene(ViewListener listener) {
-        logger.info("Building main scene");
+    public void showProgressDialog(Stage stage) {
+        progressBar = new ProgressBar();
+        progressPercent = new Label("0%");
+        progressStatus = new Label("Warming up...");
+        progressStatus.setId("progressStatus");
 
-        VBox root = new VBox(
-            buildDragDropNode(listener),
-            buildSaveAsNode(listener),
-            buildProcessNode(listener)
-        );
-        root.setId("root");
+        HBox progressBarNode = new HBox(5);
+        progressBarNode.setId("progressBarNode");
+        progressBarNode.getChildren().addAll(progressBar, progressPercent);
 
-        Scene scene = new Scene(root);
-        scene.getStylesheets().add("/css/app.css");
+        VBox progress = new VBox();
+        progress.setId("progress");
+        progress.getChildren().addAll(progressBarNode, progressStatus);
 
-        return scene;
+        progressDialog = new Dialog<>();
+        DialogPane dp = progressDialog.getDialogPane();
+        dp.getChildren().clear();
+        dp.setId("processingProgress");
+        dp.setContent(progress);
+
+        progressDialog.setTitle("Processing progress");
+        progressDialog.setHeaderText(null);
+        progressDialog.initStyle(StageStyle.UNDECORATED);
+        progressDialog.initOwner(stage);
+        progressDialog.show();
+    }
+
+    @Override
+    public void updateProgressDialog(double progress, String status) {
+        if (progress >= 0.01) {
+            progressBar.setProgress(progress);
+        }
+        progressPercent.setText((int) Math.floor(progress*100)+"%");
+        progressStatus.setText(status);
+    }
+
+    @Override
+    public void hideProgressDialog() {
+        if (progressDialog != null) {
+            progressDialog.setResult(Boolean.TRUE);
+            progressDialog.close();
+            progressDialog = null;
+        }
+    }
+
+    @Override
+    public void showProcessingComplete(Stage stage) {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.getDialogPane().setId("processingComplete");
+        dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
+        dialog.setContentText("BLS Bowler History stats converted to Excel (XLSX)!");
+        dialog.setTitle("Processing Complete");
+        dialog.setHeaderText(null);
+        dialog.initOwner(stage);
+        dialog.showAndWait();
     }
 }

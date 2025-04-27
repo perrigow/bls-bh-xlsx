@@ -18,6 +18,8 @@ import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.pdf.PDFParser;
 import org.xml.sax.SAXException;
 
+import javafx.application.Platform;
+
 public class AppModel implements Contract.Model {
 
     private static final Logger logger = Logger.getLogger(AppModel.class.getName());
@@ -47,11 +49,13 @@ public class AppModel implements Contract.Model {
     }
 
     private void updateProgress(Contract.Model.onProcessUpdateListener listener, double progress, String status) {
-        if (listener == null) {
-            logger.info("");
-            return;
+        logger.log(Level.INFO, "Progress updated to: {0}%", progress * 100);
+        logger.log(Level.INFO, "Progress status: {0}", status);
+        if (listener != null) {
+            Platform.runLater(() -> {
+                listener.onProgressUpdate(progress, status);
+            });
         }
-        listener.onProgressUpdate(progress, status);
     }
 
     @Override
@@ -87,36 +91,42 @@ public class AppModel implements Contract.Model {
             return;
         }
 
-        double jobs = (double) blsFiles.size() * 2; // multiple by 2 for process and write
-        double completed = 0.00;
-        String status = "Warming up...";
-        updateProgress(listener, completed/jobs, status);
-        try (XLSXOutputHandler xlsxHandler = new XLSXOutputHandler(xlsxFile)) {
-            for (File blsFile : blsFiles) {
-                status = "Processing \"" + blsFile.getName() + "\"";
-                updateProgress(listener, completed/jobs, status);
-                try (InputStream blsStream = new FileInputStream(blsFile)) {
-                    PDFParser parser = new PDFParser();
-                    BLSContentHandler blsHandler = new BLSContentHandler();
-                    Metadata metadata = new Metadata();
-                    ParseContext context = new ParseContext();
+        new Thread(() -> {
+            double jobs = (double) blsFiles.size() * 2; // multiple by 2 for process and write
+            double completed = 0.00;
+            String status = "Warming up...";
+            updateProgress(listener, completed/jobs, status);            
 
-                    parser.parse(blsStream, blsHandler, metadata, context);
-                    completed++;
-
-                    status = "Writing bowler history stats for \"" + blsFile.getName() + "\"";
+            try (XLSXOutputHandler xlsxHandler = new XLSXOutputHandler(xlsxFile)) {
+                for (File blsFile : blsFiles) {
+                    status = "Processing \"" + blsFile.getName() + "\"";
                     updateProgress(listener, completed/jobs, status);
-                    String sheetName = FilenameUtils.getBaseName(blsFile.getName());
-                    xlsxHandler.writeSheet(sheetName, blsHandler.records);
-                    completed++;
-                } catch (IOException | SAXException | TikaException ex) {
-                    logger.log(Level.WARNING, "Failed to process BLS file \"" + blsFile.getName() + "\"", ex);
+                    try (InputStream blsStream = new FileInputStream(blsFile)) {
+                        PDFParser parser = new PDFParser();
+                        BLSContentHandler blsHandler = new BLSContentHandler();
+                        Metadata metadata = new Metadata();
+                        ParseContext context = new ParseContext();
+                        
+                        parser.parse(blsStream, blsHandler, metadata, context);
+                        completed++;
+                        
+                        status = "Writing bowler history stats for \"" + blsFile.getName() + "\"";
+                        updateProgress(listener, completed/jobs, status);
+                        String sheetName = FilenameUtils.getBaseName(blsFile.getName());
+                        xlsxHandler.writeSheet(sheetName, blsHandler.records);
+                        completed++;
+                    } catch (IOException | SAXException | TikaException ex) {
+                        logger.log(Level.WARNING, "Failed to process BLS file \"" + blsFile.getName() + "\"", ex);
+                    }
                 }
+                status = "Done processing";
+                updateProgress(listener, completed/jobs, status);
+                Platform.runLater(() -> {
+                    listener.onProcessingComplete();
+                });
+            } catch (EncryptedDocumentException | IOException ex) {
+                logger.log(Level.SEVERE, "Failed to write to Excel (xlsx) file", ex);
             }
-            status = "Done processing";
-            updateProgress(listener, completed/jobs, status);
-        } catch (EncryptedDocumentException | IOException ex) {
-            logger.log(Level.SEVERE, "Failed to write to Excel (xlsx) file", ex);
-        }
+        }).start();
     }
 }

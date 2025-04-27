@@ -4,11 +4,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
@@ -113,8 +113,12 @@ public class AppPresenter implements Contract.Presenter, Contract.View.ViewListe
             FileChooser chooser = new FileChooser();
             chooser.setTitle("Save BLS XLSX");
             chooser.setInitialDirectory(appModel.getXlsxFile().getParentFile());
+            chooser.getExtensionFilters().add(new ExtensionFilter("Excel (*.xlsx)", "*.xlsx"));
             File xlsxFile = chooser.showSaveDialog(stage);
             if (xlsxFile != null) {
+                if (!xlsxFile.getName().endsWith(".xlsx")) {
+                    xlsxFile = new File(xlsxFile.getAbsolutePath() + ".xlsx");
+                }
                 appModel.setXlsxFile(xlsxFile);
                 appView.setSaveAsText(xlsxFile.getName());
             }
@@ -124,17 +128,21 @@ public class AppPresenter implements Contract.Presenter, Contract.View.ViewListe
     @Override
     public EventHandler<MouseEvent> startProcessHandler() {
         return (MouseEvent event) -> {
-            // add code to show progress and update progress
+            appView.showProgressDialog(stage);
             appModel.parseBowlerHistory(this);
-            // alert to notify user processing has been completed
-            resetModelView();
         };
     }
 
     @Override
     public void onProgressUpdate(double progress, String status) {
-        logger.log(Level.INFO, "Progress updated to: {0}%", progress * 100);
-        logger.log(Level.INFO, "Progress status: {0}", status);
+        appView.updateProgressDialog(progress, status);
+    }
+
+    @Override
+    public void onProcessingComplete() {
+        appView.hideProgressDialog();
+        appView.showProcessingComplete(stage);
+        resetModelView();
     }
 
     @Override
@@ -144,7 +152,8 @@ public class AppPresenter implements Contract.Presenter, Contract.View.ViewListe
         Scene scene = appView.buildMainScene(this);
 
         stage.setTitle("BLS Bowler History to XLSX");
-        //stage.getIcons().add(new Image(("images/logo/logo.png")));
+        stage.getIcons().clear();
+        stage.getIcons().addAll(new Image("/img/logo_32x32.png"));
         stage.setResizable(false);
         stage.setScene(scene);
 
