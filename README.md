@@ -36,3 +36,20 @@ BLS - developed by CDE Software, https://www.cdesoftware.com/.
     2. Type in a 'File name'
     3. Make sure 'Save as type' is 'PDF Document (*.pdf)'
 11. Click 'Save'
+
+---
+
+## Convert BLS Bowler History Export (TODO)
+1. Open the application
+2. Select input files by choosing one of the following ways:
+    * Drag & Drop a selction of files or folder into the outlined area
+    * Select muliple files using the "Browse Files" button and file chooser
+    * Select folder using the "Browse Folders" button and folder chooser
+3. (Optional) Click on the "Save as..." button and choose an alternate Excel (xlsx) output location and file name
+    * The default location is in the parent folder of the files selected or in the folder that was selected
+    * The default file name follows the following pattern "BowlerStats_yyyyMMdd'T'HHmmss.xlsx"
+4. Hit the "Start!" button
+5. Wait for the files to process
+6. Click "OK" when the confirmation box appears
+    * Note: the application will reset after clicking "OK"
+7. Exit the application; click the "x" in the upper right corner :)

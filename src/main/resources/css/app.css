@@ -114,7 +114,7 @@
 #progressBarNode .progress-bar {
     -fx-min-height: 30;
     -fx-min-width: 300;
-    -fx-accent: #0097A7;
+    -fx-accent: #26C6DA;
 }
 #progressBarNode .label {
     -fx-alignment: center-right;
