@@ -182,7 +182,7 @@ public class AppView implements Contract.View {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.getDialogPane().setId("processingComplete");
         dialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
-        dialog.setContentText("BLS Bowler History stats converted to Excel (XLSX)!");
+        dialog.setContentText("Processing Complete!");
         dialog.setTitle("Processing Complete");
         dialog.setHeaderText(null);
         dialog.initOwner(stage);

@@ -89,21 +89,21 @@
 }
 
 #processingComplete .label {
-    -fx-text-alignment: center;
+    -fx-alignment: center;
     -fx-padding: 12 0 8 0;
 }
 
 #processingProgress {
     -fx-padding: 15;
-    -fx-min-height: 100;
-}
-#processingProgress .label {
-    -fx-font: 18 sans-serif;
 }
 
 #progressStatus {
+    -fx-font: 14 sans-serif;
+    -fx-alignment: top-left;
     -fx-min-width: 360;
+    -fx-pref-width: 360;
     -fx-max-width: 360;
+    -fx-min-height: 45;
     -fx-wrap-text: true;
     -fx-padding: 0 3 0 3;
 }
@@ -118,5 +118,6 @@
 }
 #progressBarNode .label {
     -fx-alignment: center-right;
+    -fx-font: 18 sans-serif;
     -fx-min-width: 50;
 }
