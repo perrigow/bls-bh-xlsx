@@ -39,7 +39,7 @@ BLS - developed by CDE Software, https://www.cdesoftware.com/.
 
 ---
 
-## Convert BLS Bowler History Export (TODO)
+## Convert BLS Bowler History Export
 1. Open the application
 2. Select input files by choosing one of the following ways:
     * Drag & Drop a selection of files or a folder into the outlined area
@@ -53,3 +53,23 @@ BLS - developed by CDE Software, https://www.cdesoftware.com/.
 5. Click "OK" when the confirmation box appears
     * Note: the application will reset after clicking "OK"
 6. Exit the application; click the "x" in the upper right corner :)
+
+---
+
+## Application Development (devs only)
+Below are the environment and commands to build, run, and package the application
+
+### Environment
+Originally developed using:
+* OpenJDK - 21.0.6
+* Apache Maven - 3.9.6
+
+### Build and Run Application
+```
+$ mvn clean javafx:run
+```
+
+### Package Application (fat jar)
+```
+$ mvn clean compile package
+```
