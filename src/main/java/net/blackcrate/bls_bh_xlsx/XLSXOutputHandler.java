@@ -16,7 +16,6 @@ import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -33,11 +32,7 @@ public class XLSXOutputHandler implements Closeable {
     public XLSXOutputHandler(File xlsxFile) throws IOException, EncryptedDocumentException {
         this.xlsxFile = xlsxFile;
 
-        if (xlsxFile.exists()) {
-            workbook = (XSSFWorkbook) WorkbookFactory.create(xlsxFile);
-        } else {
-            workbook = (XSSFWorkbook) WorkbookFactory.create(true);
-        }
+        workbook = new XSSFWorkbook();
 
         DataFormat dataFormat = workbook.createDataFormat();
 
