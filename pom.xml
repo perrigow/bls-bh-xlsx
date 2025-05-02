@@ -53,25 +53,6 @@
       <artifactId>javafx-controls</artifactId>
       <version>${javafx.version}</version>
     </dependency>
-
-    <dependency>
-        <groupId>org.openjfx</groupId>
-        <artifactId>javafx-graphics</artifactId>
-        <version>${javafx.version}</version>
-        <classifier>win</classifier>
-    </dependency>
-    <dependency>
-        <groupId>org.openjfx</groupId>
-        <artifactId>javafx-graphics</artifactId>
-        <version>${javafx.version}</version>
-        <classifier>linux</classifier>
-    </dependency>
-    <dependency>
-        <groupId>org.openjfx</groupId>
-        <artifactId>javafx-graphics</artifactId>
-        <version>${javafx.version}</version>
-        <classifier>mac</classifier>
-    </dependency>
   </dependencies>
 
   <build>
@@ -105,7 +86,6 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
         <version>${maven.shade.version}</version>
         <executions>
@@ -132,7 +112,7 @@
                 </transformer>
               </transformers>
               <createDependencyReducedPom>false</createDependencyReducedPom>
-              <finalName>${project.name}.jar</finalName>
+              <finalName>${project.name}</finalName>
               <outputDirectory>${project.build.directory}/${project.name}_${project.version}_${os.name}_${os.arch}/bin</outputDirectory>
             </configuration>
           </execution>

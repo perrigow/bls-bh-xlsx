@@ -40,19 +40,21 @@ BLS - developed by CDE Software, https://www.cdesoftware.com/.
 ---
 
 ## Convert BLS Bowler History Export
-1. Open the application
-2. Select input files by choosing one of the following ways:
+1. Download and unzip the distribution file
+2. Open the distribution folder (e.g. bls-bh-xlsx_1.0.0_Windows)
+3. Double click "bls-bh-xlsx.bat" file to open the application
+4. Select input files by choosing one of the following ways:
     * Drag & Drop a selection of files or a folder into the outlined area
     * Select multiple files by clicking the "Browse Files" button and using the file chooser
     * Select a folder by clicking the "Browse Folders" button and using the folder chooser
-3. (Optional) Click on the "Save as..." button and choose an alternate output location and file name
+5. (Optional) Click on the "Save as..." button and choose an alternate output location and file name
     * The default location is the parent folder of the files selected or in the folder that was selected
     * The default file name follows the following pattern: "BowlerStats_yyyyMMdd'T'HHmmss.xlsx"
-4. Hit the "Start!" button
+6. Hit the "Start!" button
     * Wait for the files to process
-5. Click "OK" when the confirmation box appears
+7. Click "OK" when the confirmation box appears
     * Note: the application will reset after clicking "OK"
-6. Exit the application; click the "x" in the upper right corner :)
+8. Exit the application; click the "x" in the upper right corner :)
 
 ---
 
