@@ -1,0 +1,123 @@
+#root {
+    -fx-background-color: #E0E0E0;
+    -fx-min-width: 600;
+    -fx-min-height: 400;
+    -fx-alignment: center;
+    -fx-font: 18 sans-serif;
+    -fx-spacing: 20;
+}
+
+.button {
+    -fx-background-insets: 0;
+    -fx-background-radius: 3;
+    -fx-background-color: #26C6DA;
+}
+.button:hover {
+    -fx-background-color: #4DD0E1;
+}
+.button:pressed {
+    -fx-background-color: #80DEEA;
+}
+
+.dragDropButton {
+    -fx-border-radius: 3;
+    -fx-background-color: transparent;
+    -fx-border-color: #9E9E9E;
+    -fx-text-fill: #0097A7;
+}
+.dragDropButton:hover {
+    -fx-background-color: #EEEEEE;
+}
+.dragDropButton:pressed {
+    -fx-background-color: #E0F7FA;
+}
+
+.label {
+    -fx-font: 24 sans-serif;
+}
+
+#dragDrop {
+    -fx-border-width: 3;
+    -fx-border-style: dashed;
+    -fx-border-radius: 5;
+    -fx-border-color: #90A4AE;
+    -fx-min-width: 500;
+    -fx-min-height: 250;
+    -fx-max-width: 500;
+    -fx-max-height: 250;
+    -fx-alignment: center;
+    -fx-spacing: 75;
+    -fx-padding: 50 0 0 0;
+}
+
+#dragDropLabel {
+}
+
+#dragDropButtons {
+    -fx-alignment: center;
+    -fx-spacing: 20;
+}
+
+#saveAs {
+    -fx-alignment: center;
+}
+
+#saveAsText {
+    -fx-min-width: 400;
+    -fx-background-radius: 0 5 5 0;
+    -fx-background-insets: 1 1 1 0;   
+}
+#saveAsText:disabled {
+    -fx-opacity: 0.9;
+}
+
+#saveAsButton {
+    -fx-background-radius: 5 0 0 5;
+    -fx-background-insets: 1 0 1 1;
+}
+
+#process {
+    -fx-alignment: center;
+}
+
+#processNumFiles {
+    -fx-min-width: 400;
+}
+
+#processStart {
+    -fx-min-width: 100;
+}
+
+#processingComplete .label {
+    -fx-alignment: center;
+    -fx-padding: 12 0 8 0;
+}
+
+#processingProgress {
+    -fx-padding: 15;
+}
+
+#progressStatus {
+    -fx-font: 14 sans-serif;
+    -fx-alignment: top-left;
+    -fx-min-width: 360;
+    -fx-pref-width: 360;
+    -fx-max-width: 360;
+    -fx-min-height: 45;
+    -fx-wrap-text: true;
+    -fx-padding: 0 3 0 3;
+}
+
+#progressBarNode {
+    -fx-alignment: center;
+}
+#progressBarNode .progress-bar {
+    -fx-min-height: 30;
+    -fx-min-width: 300;
+    -fx-accent: #26C6DA;
+}
+#progressBarNode .label {
+    -fx-alignment: center-right;
+    -fx-font: 18 sans-serif;
+    -fx-min-width: 50;
+}
