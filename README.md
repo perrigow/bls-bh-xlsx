@@ -69,7 +69,7 @@ Originally developed using:
 $ mvn clean javafx:run
 ```
 
-### Package Application (fat jar)
+### Package Application (custom JDK and fat jar)
 ```
-$ mvn clean compile package
+$ mvn clean package
 ```
