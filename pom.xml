@@ -76,7 +76,7 @@
                 <goal>jlink</goal>
             </goals>
             <configuration>
-              <addModules>java.logging,java.xml,jdk.unsupported</addModules>
+              <addModules>java.desktop,java.logging,java.sql,java.xml,jdk.unsupported</addModules>
               <noHeaderFiles>true</noHeaderFiles>
               <noManPages>true</noManPages>
               <stripDebug>true</stripDebug>
