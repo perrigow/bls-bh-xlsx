@@ -5,7 +5,7 @@
 
   <groupId>net.blackcrate.bls_bh_xlsx</groupId>
   <artifactId>bls-bh-xlsx</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
 
   <name>bls-bh-xlsx</name>
   <url>https://github.com/perrigow/bls-bh-xlsx</url>
