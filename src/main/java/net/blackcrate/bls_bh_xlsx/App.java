@@ -14,8 +14,10 @@ import javafx.stage.Stage;
 public class App extends Application {
 
     static {
+        System.out.println("Loading logging properties file");
         try (InputStream loggingProperties = App.class.getClassLoader().getResourceAsStream("logging.properties")) {
             LogManager.getLogManager().readConfiguration(loggingProperties);
+            System.out.println("Logging properties file loaded");
         } catch (Exception ex) {
             System.out.println("WARNING: Could not load logger properties: " + ex.getLocalizedMessage());
         }
@@ -31,7 +33,7 @@ public class App extends Application {
         appView = new AppView();
         appModel = new AppModel();
         appPresenter = new AppPresenter(appView, appModel);
-    }   
+    }
 
     @Override
     public void start(Stage stage) throws Exception {
