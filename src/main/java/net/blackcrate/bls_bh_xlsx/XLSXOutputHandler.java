@@ -76,7 +76,7 @@ public class XLSXOutputHandler implements Closeable {
 
     private void writeCell(Sheet sheet, Row row, int index, String value, CellStyle style) {
         Cell cell = row.createCell(index);
-        cell.setCellValue(value.trim().concat(" "));
+        cell.setCellValue(value.trim());
         cell.setCellStyle(style);
         sheet.autoSizeColumn(index);
     }
