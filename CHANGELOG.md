@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.2] - 2025-05-15
+Patch to remove extra space after name
+### Updated
+- Excel (XLSX) output handler, remove space after name
+
 ## [1.0.1] - 2025-05-03
 Patch to fix bolded games
 ### Updated
